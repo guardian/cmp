@@ -47,7 +47,12 @@ export const ScreenDimensions = {
  * @return {*}  {Promise<void>}
  */
 export const clearCookies = async (page: Page): Promise<void> => {
-	await page.context().clearCookies();
+	const cookies = await page.context().cookies();
+
+	for(const cookie of cookies) {
+		await page.context().clearCookies(cookie);
+	}
+
 	log_info(`Cleared Cookies`);
 };
 
@@ -378,7 +383,7 @@ export const checkCMPIsOnPage = async (
 
 	if (isAmp) {
 		cmpl = page
-			.frameLocator('.i-amphtml-consent-ui-fill')
+			.frameLocator(ELEMENT_ID.AMP_CMP_CONTAINER)
 			.locator(ELEMENT_ID.CMP_CONTAINER);
 	} else {
 		cmpl = page.locator(ELEMENT_ID.CMP_CONTAINER);
